@@ -4,18 +4,15 @@ const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 const cors = require("cors");
 const app = express();
-app.use(cors())
-app.use(express.static('dist'))
+app.use(cors());
+app.use(express.static(path.join(__dirname, "dist")));
 
 app.use(express.json());
 
-
 app.post("/users", async (req, res) => {
-    
   const { name } = req.body;
 
   try {
-    
     const user = await prisma.user.create({
       data: { name },
     });
@@ -33,7 +30,6 @@ app.get("/users", async (req, res) => {
   }
 });
 
-
 app.post("/projects", async (req, res) => {
   const { name } = req.body;
 
@@ -49,7 +45,6 @@ app.post("/projects", async (req, res) => {
   }
 });
 
-
 app.get("/projects", async (req, res) => {
   try {
     const projects = await prisma.project.findMany();
@@ -57,6 +52,9 @@ app.get("/projects", async (req, res) => {
   } catch (error) {
     res.status(500).json({ error: "Failed to fetch projects" });
   }
+});
+app.get("*", (req, res) => {
+  res.sendFile(path.resolve(__dirname, "dist", "index.html"));
 });
 
 const PORT = 3000;
